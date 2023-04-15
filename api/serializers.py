@@ -33,9 +33,9 @@ class FarmDetailSerializer(serializers.ModelSerializer):
         serializer=ProductSerailizer(queryset, many=True)
         return serializer.data
 
-class OrderSerializer(serializers.ModelSerializer):
+class TransportationSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Order
+        model=t=Transportation
         fields='__all__'
 
 class regSerializer(serializers.ModelSerializer):

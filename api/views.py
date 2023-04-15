@@ -8,6 +8,52 @@ from rest_framework.response import Response
 from .permissions import IsBuyerUser, IsFarmerUser, IsTransporterUser
 from .serializers import *
 from .models import *
+from rest_framework.views import APIView
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+
+
+class FarmerUpdateView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self, pk):
+        try:
+            farmer = Farmer.objects.get(pk=pk)
+            self.check_object_permissions(self.request, farmer)
+            return farmer
+        except Farmer.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        farmer = self.get_object(pk)
+        serializer = FarmerSerializer(farmer)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        farmer = self.get_object(pk)
+        serializer = FarmerSerializer(farmer, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FarmerDeleteView(APIView):
+    def get_object(self, pk):
+        try:
+            farmer = Farmer.objects.get(pk=pk)
+            self.check_object_permissions(self.request, farmer)
+            return farmer
+        except Farmer.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        farmer = self.get_object(pk)
+        serializer = FarmerSerializer(farmer)
+        return Response(serializer.data)
+    def delete(self, request, pk, format=None):
+        farmer = self.get_object(pk)
+        farmer.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class FarmViewset (viewsets.ReadOnlyModelViewSet):
     serializer_class=FarmListSerializer
@@ -106,7 +152,7 @@ class UpdateFarm(APIView):
 
     def put(self, request, pk, format=None):
         farm = self.get_object(pk)
-        serializer = FarmerSerializer(farm, data=request.data)
+        serializer = FarmSerializer(farm, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -137,7 +183,7 @@ class GetFarm(APIView):
     def get(self, request, pk, format=None):
         farm = self.get_object(pk)
         products = Product.objects.filter(farm=farm.id).all()
-        serializer = FarmerSerializer(farm) #, RoomSerializer(rooms)
+        serializer = FarmSerializer(farm) #, RoomSerializer(rooms)
         # serializer = RoomSerializer(rooms)
         return Response(serializer.data)
     
@@ -188,7 +234,7 @@ class DeleteProduct(APIView):
 #add an order     
 class AddOrder(CreateAPIView):
     serializer_class = OrderSerializer
-    permission_classes=[permissions.IsAuthenticated and IsBuyerUser]
+    permission_classes=[permissions.IsAuthenticated]
     
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -197,4 +243,94 @@ class AddOrder(CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
+#update order
+class UpdateOrder(APIView):
+    permission_classes=[permissions.IsAuthenticated]
+    def get_object(self, pk):
+        try:
+            return Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk, format=None):
+        order= self.get_object(pk)
+        serializer = OrderSerializer(order, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#Cancel or Delete order     
+class DeleteOrder(APIView):
+    permission_classes=[permissions.IsAuthenticated]
+    def get_object(self, pk):
+        try:
+            return Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            raise Http404
+            
+    def delete(self, request, pk, format=None):
+        order= self.get_object(pk)
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+#all order
+class OrderList (APIView):
+    permission_classes=[permissions.IsAuthenticated]
+    def get(self, request, format=None):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+
+#Add transportation
+class AddTransportaion(CreateAPIView):
+    serializer_class=TransportationSerializer
+    permission_classes=[permissions.IsAuthenticated]
+    def post(self, request):
+        serializer=self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+#List Transportation
+class TransportationList (APIView):
+    permission_classes=[permissions.IsAuthenticated]
+    def get(self, request, format=None):
+        transportations=Transportation.objects.all()
+        serializer=Transportation(transportations, many=True)
+        return Response(serializer.data)
+
+#update Transportation
+class UpdateTransportation(APIView):
+    permission_classes=[permissions.IsAuthenticated]
+    def get_object(self, pk):
+        try:
+            return Transportation.objects.get(pk=pk)
+        except Transportation.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk, format=None):
+        transport= self.get_object(pk)
+        serializer = TransportationSerializer(transport, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#Cancel or Delete transportation     
+class DeleteTransportation(APIView):
+    permission_classes=[permissions.IsAuthenticated]
+    def get_object(self, pk):
+        try:
+            return Transportation.objects.get(pk=pk)
+        except Transportation.DoesNotExist:
+            raise Http404
+            
+    def delete(self, request, pk, format=None):
+        order= self.get_object(pk)
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
