@@ -1,0 +1,1 @@
+web: gunicorn swipe.wsgi --log-file -
