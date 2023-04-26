@@ -1,4 +1,4 @@
-# product_transportationSure
+# product_transportation
 
 ## Features
 
@@ -6,9 +6,8 @@
 ## Technologies Used
 
 - Python (Django framework)
-- HTML/CSS/JavaScript
 - PostgreSQL database
-- Docker containerization
+
 
 ## Installation
 
