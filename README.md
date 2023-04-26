@@ -9,6 +9,7 @@ PostgreSQL database
 
 
 ##Installation
+
 Clone this repository to your local machine using git clone https://github.com/username/transportation-project.git
 Install the required Python packages using pip install -r requirements.txt
 Set up the database using python manage.py migrate
