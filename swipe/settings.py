@@ -127,6 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT=os.path.join(BASE_DIR, 'static')
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # add the domain of your frontend application here
