@@ -139,7 +139,7 @@ AUTH_USER_MODEL="api.CustomUser"
 
 STORAGES = {
     # ...
-    "static": {
+    "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
