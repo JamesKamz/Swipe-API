@@ -5,28 +5,22 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
+
 env = environ.Env(
-    # set casting, default value
     DEBUG=(bool, False)
 )
 
-# Set the project base directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# False if not in os.environ because of casting above
+
 DEBUG = env('DEBUG')
 
-# Raises Django's ImproperlyConfigured
-# exception if SECRET_KEY not in os.environ
 SECRET_KEY = env('SECRET_KEY')
 
 
-ALLOWED_HOSTS = env('ALLOWED_HOST')
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -79,22 +73,25 @@ WSGI_APPLICATION = 'swipe.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-
-
+'''
 DATABASES = {
-    # read os.environ['DATABASE_URL'] and raises
-    # ImproperlyConfigured exception if not found
-    #
-    # The db() method is an alias for db_url().
     'default': env.db(),
-
-    # read os.environ['SQLITE_URL']
     'extra': env.db_url(
         'DATABASE_URL',
     )
 }
+
+'''
+
+# Render Database for live
+
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.parse(env('DATABASE_URL'))
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
