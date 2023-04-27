@@ -20,7 +20,7 @@ DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['swipe-qgg0.onrender.com']
 
 # Application definition
 
